@@ -6,7 +6,7 @@ using UnityEditor;
 using Object = UnityEngine.Object;
 
 namespace QuickGameFramework.Runtime {
-    public static class QuickLogger {
+    public static class QLog {
         // 普通调试日志开关
         public static bool DebugLogEnable = true;
 
@@ -149,7 +149,7 @@ namespace QuickGameFramework.Runtime {
         /// <summary>
         /// 警告日志
         /// </summary>
-        public static void LogWarning(object message, Object context = null) {
+        public static void Warning(object message, Object context = null) {
             if (!WarningLogEnable) return;
             Debug.LogWarning(message, context);
         }
@@ -157,7 +157,7 @@ namespace QuickGameFramework.Runtime {
         /// <summary>
         /// 错误日志
         /// </summary>
-        public static void LogError(object message, Object context = null) {
+        public static void Error(object message, Object context = null) {
             if (!ErrorLogEnable) return;
             Debug.LogError(message, context);
         }
@@ -199,7 +199,7 @@ namespace QuickGameFramework.Runtime {
 
         public static bool Assert(bool condition, string errorMsg) {
             if (!condition)
-                LogError(errorMsg);
+                Error(errorMsg);
             return condition;
         }
 

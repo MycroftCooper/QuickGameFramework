@@ -20,7 +20,7 @@ namespace QuickGameFramework.Runtime {
             OnInit();
         }
         protected virtual void OnInit() {
-            QuickLogger.LogError($"QuickGameFramework>Entity>Error>{ID}-{AssetName} 该实体未实现OnInit");
+            QLog.Error($"QuickGameFramework>Entity>Error>{ID}-{AssetName} 该实体未实现OnInit");
         }
         
         public void Recycle() {
