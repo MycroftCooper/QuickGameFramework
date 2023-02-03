@@ -9,6 +9,6 @@ namespace QuickGameFramework.Runtime {
         public string gameVersion = "v1.0";
 
         public string hostServerIP;
-        public string fallbackHostServerIP;
+        public string backupHostServerIP;
     }
 }

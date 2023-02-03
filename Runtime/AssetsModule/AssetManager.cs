@@ -1,11 +1,14 @@
+using System;
 using System.Collections;
 using MycroftToolkit.QuickCode;
 using UnityEngine;
 using YooAsset;
+using Object = UnityEngine.Object;
 
 namespace QuickGameFramework.Runtime {
 	public class AssetManager : Singleton<AssetManager> {
 		private ProjectAssetSetting _projectAssetSetting;
+		private AssetsPackage _defaultPackage;
 
 		public void Init() {
 			_projectAssetSetting = Resources.Load<ProjectAssetSetting>("ProjectAssetSetting");
@@ -17,19 +20,48 @@ namespace QuickGameFramework.Runtime {
 
 			ModuleManager.StartCoroutine(InitPackage());
 		}
-		
-		
 
+		public void LoadAssetAsync<T>(string path, Action<AssetOperationHandle> callback ,string packageName = null) where T : Object {
+			if (!GetAssetPackage(packageName, out AssetsPackage package)) {
+				return;
+			}
+			AssetOperationHandle handle = package.LoadAssetAsync<T>(path);
+			handle.Completed += callback;
+		}
+		
+		public T LoadAssetSync<T>(string path, string packageName = null) where T : Object {
+			if (!GetAssetPackage(packageName, out AssetsPackage package)) {
+				return default;
+			}
+			return (T) package.LoadAssetSync<T>(path).AssetObject;
+		}
+
+		public void ReleaseAsset() {
+			
+		}
+
+		public void UnloadAssets() {
+			
+		}
+
+		private bool GetAssetPackage(string packageName, out AssetsPackage package) {
+			package = string.IsNullOrEmpty(packageName) ? _defaultPackage : YooAssets.TryGetAssetsPackage(packageName);
+			if (package != null) return true;
+			QLog.Warning($"QuickGameFramework>Asset>资源包<{packageName}>不存在!");
+			return false;
+		}
+		
 		private IEnumerator InitPackage() {
 			var defaultPackageName = _projectAssetSetting.defaultPackageName;
 			var playMode = _projectAssetSetting.playMode;
-			
+
 			// 创建默认的资源包
 			var package = YooAssets.TryGetAssetsPackage(defaultPackageName);
 			if (package == null) {
 				package = YooAssets.CreateAssetsPackage(defaultPackageName);
 				YooAssets.SetDefaultAssetsPackage(package);
 			}
+			_defaultPackage = package;
 
 			InitializationOperation initializationOperation = null;
 			switch (playMode) {
@@ -72,8 +104,8 @@ namespace QuickGameFramework.Runtime {
 			}
 		}
 		
-		private string GetHostServerURL(bool isFallback) {
-			var hostServerIP = isFallback? _projectAssetSetting.fallbackHostServerIP : _projectAssetSetting.hostServerIP;
+		private string GetHostServerURL(bool isBackup) {
+			var hostServerIP = isBackup? _projectAssetSetting.backupHostServerIP : _projectAssetSetting.hostServerIP;
 			var gameVersion = _projectAssetSetting.gameVersion;
 #if UNITY_EDITOR
 			return UnityEditor.EditorUserBuildSettings.activeBuildTarget switch {
