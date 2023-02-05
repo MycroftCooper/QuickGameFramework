@@ -22,6 +22,7 @@ namespace QuickGameFramework.Procedure {
         /// </summary>
         /// <remarks>优先级较高的模块会优先轮询，并且关闭操作会后进行。</remarks>
         public int Priority { get => -2; set { } }
+        public bool IsFrameworkModule => true;
 
         /// <summary>
         /// 获取当前流程。

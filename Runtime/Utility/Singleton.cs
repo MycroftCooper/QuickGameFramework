@@ -17,7 +17,7 @@ namespace QuickGameFramework.Runtime {
 
     public class MonoSingleton<T> : MonoBehaviour where T : MonoBehaviour {
         private static T _instance;
-        private static readonly object _lock = new object();
+        private static readonly object Lock = new ();
         /// <summary>
         /// 程序是否正在退出
         /// </summary>
@@ -25,16 +25,16 @@ namespace QuickGameFramework.Runtime {
         /// <summary>
         /// 是否为全局单例
         /// </summary>
-        private static bool dontDestry = true;
+        private static bool _dontDestroy;
         protected static bool IsGlobal {
-            get => dontDestry;
+            get => _dontDestroy;
             set {
-                if (value == dontDestry || !Application.isPlaying) return;
+                if (value == _dontDestroy || !Application.isPlaying) return;
                 if (value)
-                    DontDestroyOnLoad(_instance.gameObject);
+                    DontDestroyOnLoad(Instance.gameObject);
                 else
-                    SceneManager.MoveGameObjectToScene(_instance.gameObject, SceneManager.GetActiveScene());
-                dontDestry = value;
+                    SceneManager.MoveGameObjectToScene(Instance.gameObject, SceneManager.GetActiveScene());
+                _dontDestroy = value;
             }
         }
 
@@ -46,15 +46,12 @@ namespace QuickGameFramework.Runtime {
             get {
                 if (ApplicationIsQuitting) {
                     if (Debug.isDebugBuild) {
-                        Debug.LogWarning("[Singleton] " + typeof(T) +
-                                                " already destroyed on application quit." +
-                                                " Won't create again - returning null.");
+                        QLog.Error($"QuickGameFramework>Singleton>已进入退出游戏过程，单例<{typeof(T)}>创建失败！");
                     }
-
                     return null;
                 }
 
-                lock (_lock) {
+                lock (Lock) {
                     if (_instance != null) return _instance;
                     
                     // 先在场景中找寻
@@ -62,26 +59,22 @@ namespace QuickGameFramework.Runtime {
 
                     if (FindObjectsOfType(typeof(T)).Length > 1) {
                         if (Debug.isDebugBuild) {
-                            Debug.LogWarning("[Singleton] " + typeof(T).Name + " should never be more than 1 in scene!");
+                            QLog.Error($"QuickGameFramework>Singleton> 单例 {typeof(T).Name}创建失败，该单例已存在，一个场景不应当有多个相同单例！");
                         }
-
                         return _instance;
                     }
 
-                    
                     // 场景中找不到就创建新物体挂载
                     if (_instance != null) return _instance;
                     
                     GameObject singletonObj = new GameObject();
                     _instance = singletonObj.AddComponent<T>();
-                    singletonObj.name = "(singleton) " + typeof(T);
+                    singletonObj.name = typeof(T).Name;
 
                     if (IsGlobal && Application.isPlaying) {
                         DontDestroyOnLoad(singletonObj);
                     }
-
                     return _instance;
-
                 }
             }
         }
@@ -91,6 +84,10 @@ namespace QuickGameFramework.Runtime {
         /// </summary>
         public void OnApplicationQuit() {
             ApplicationIsQuitting = true;
+        }
+
+        private void OnDestroy() {
+            _instance = null;
         }
     }
 }

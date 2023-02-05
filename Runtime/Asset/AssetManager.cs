@@ -22,7 +22,7 @@ namespace QuickGameFramework.Runtime {
 			}
 
 			_packages = new Dictionary<string, AssetsPackage>();
-			ModuleManager.StartCoroutine(InitPackage());
+			CoroutineManager.Instance.StartCoroutine(InitPackage());
 		}
 
 		#region 资源加载API

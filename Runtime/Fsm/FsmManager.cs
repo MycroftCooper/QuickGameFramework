@@ -26,7 +26,8 @@ namespace QuickGameFramework.Fsm {
         /// 获取游戏框架模块优先级。
         /// </summary>
         /// <remarks>优先级较高的模块会优先轮询，并且关闭操作会后进行。</remarks>
-        int IModule.Priority { get => 1; set { } }
+        int IModule.Priority { get => -1; set { } }
+        public bool IsFrameworkModule => true;
 
         /// <summary>
         /// 获取有限状态机数量。
