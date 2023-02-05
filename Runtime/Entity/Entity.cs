@@ -5,18 +5,17 @@ namespace QuickGameFramework.Runtime {
     public abstract class Entity : MonoBehaviour {
         public int ID { get; private set; }
         public string AssetName { get; private set; }
-        public IEntityGroup Group { get; private set; }
-        
+
         public virtual ValueType Data { get; set; }
 
-        protected EntityFactory Factory;
+        private EntityFactory _factory;
 
 
-        internal void Init(int entityID, string entityAssetName, IEntityGroup entityGroup = null, ValueType data = null) {
+        internal void Init(int entityID, string entityAssetName,EntityFactory factory, ValueType data = null) {
             ID = entityID;
             AssetName = entityAssetName;
-            Group = entityGroup;
             Data = data;
+            _factory = factory;
             OnInit();
         }
         protected virtual void OnInit() {
@@ -24,7 +23,7 @@ namespace QuickGameFramework.Runtime {
         }
         
         public void Recycle() {
-            Factory.RecycleEntity(this);
+            _factory.RecycleEntity(this);
         }
 
         public virtual void EntityUpdate(float logicTimeSpan, float realTimeSpan) { }

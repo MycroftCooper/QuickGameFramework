@@ -3,7 +3,7 @@
 namespace QuickGameFramework.Runtime {
 	internal class ModuleDriver : MonoBehaviour {
 		void Update() {
-			ModuleManager.Update();
+			ModuleManager.Update(Time.deltaTime);
 		}
 	}
 }

@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using MycroftToolkit.QuickCode;
-using Sirenix.Utilities;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using YooAsset;
@@ -164,9 +163,9 @@ namespace QuickGameFramework.Runtime {
 			switch (playMode) {
 				// 编辑器下的模拟模式
 				case EPlayMode.EditorSimulateMode: {
-					var createParameters = new EditorSimulateModeParameters();
-					createParameters.SimulatePatchManifestPath =
-						EditorSimulateModeHelper.SimulateBuild(defaultPackageName);
+					var createParameters = new EditorSimulateModeParameters {
+						SimulatePatchManifestPath = EditorSimulateModeHelper.SimulateBuild(defaultPackageName)
+					};
 					initializationOperation = package.InitializeAsync(createParameters);
 					break;
 				}
@@ -181,11 +180,12 @@ namespace QuickGameFramework.Runtime {
 
 				// 联机运行模式
 				case EPlayMode.HostPlayMode: {
-					var createParameters = new HostPlayModeParameters();
-					// createParameters.DecryptionServices 可提供资源包加密类
-					// createParameters.QueryServices = new GameQueryServices(); 内置文件查询服务类
-					createParameters.DefaultHostServer = GetHostServerURL(true);
-					createParameters.FallbackHostServer = GetHostServerURL(false);
+					var createParameters = new HostPlayModeParameters {
+						// DecryptionServices = 可提供资源包加密类
+						// QueryServices = new GameQueryServices(); 内置文件查询服务类
+						DefaultHostServer = GetHostServerURL(true),
+						FallbackHostServer = GetHostServerURL(false)
+					};
 					initializationOperation = package.InitializeAsync(createParameters);
 					break;
 				}
