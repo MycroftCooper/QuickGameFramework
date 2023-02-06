@@ -6,23 +6,25 @@ namespace QuickGameFramework.Procedure {
     public class ProcedureManager:IModule, IProcedureManager {
         private IFsmManager _fsmManager;
         private IFsm<IProcedureManager> _procedureFsm;
-
-        /// <summary>
-        /// 初始化流程管理器的新实例。
-        /// </summary>
-        public ProcedureManager() {
-            _fsmManager = null;
-            _procedureFsm = null;
-        }
-
-        public void OnModuleCreate(params object[] createParam) { }
-
+        
         /// <summary>
         /// 获取游戏框架模块优先级。
         /// </summary>
         /// <remarks>优先级较高的模块会优先轮询，并且关闭操作会后进行。</remarks>
         public int Priority { get => -2; set { } }
         public bool IsFrameworkModule => true;
+
+        public void OnModuleCreate(params object[] createParam) { }
+        
+        /// <summary>
+        /// 初始化流程管理器。
+        /// </summary>
+        /// <param name="fsmManager">有限状态机管理器。</param>
+        /// <param name="procedures">流程管理器包含的流程。</param>
+        public void Initialize(IFsmManager fsmManager, params ProcedureBase[] procedures) {
+            _fsmManager = fsmManager ?? throw new Exception("FSM manager is invalid.");
+            _procedureFsm = _fsmManager.CreateFsm(this, procedures);
+        }
 
         /// <summary>
         /// 获取当前流程。
@@ -54,7 +56,9 @@ namespace QuickGameFramework.Procedure {
         /// 流程管理器轮询。
         /// </summary>
         /// <param name="intervalSeconds">流逝时间，以秒为单位。</param>
-        public void OnModuleUpdate(float intervalSeconds) { }
+        public void OnModuleUpdate(float intervalSeconds) {
+            CurrentProcedure.OnUpdate(_procedureFsm, intervalSeconds);
+        }
 
         /// <summary>
         /// 关闭并清理流程管理器。
@@ -66,16 +70,6 @@ namespace QuickGameFramework.Procedure {
                 _procedureFsm = null;
             }
             _fsmManager = null;
-        }
-
-        /// <summary>
-        /// 初始化流程管理器。
-        /// </summary>
-        /// <param name="fsmManager">有限状态机管理器。</param>
-        /// <param name="procedures">流程管理器包含的流程。</param>
-        public void Initialize(IFsmManager fsmManager, params ProcedureBase[] procedures) {
-            _fsmManager = fsmManager ?? throw new Exception("FSM manager is invalid.");
-            _procedureFsm = _fsmManager.CreateFsm(this, procedures);
         }
 
         /// <summary>

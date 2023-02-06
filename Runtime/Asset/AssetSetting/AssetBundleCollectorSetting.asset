@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 185f6993d5150494d98da50e26cb1c25, type: 3}
   m_Name: AssetBundleCollectorSetting
   m_EditorClassIdentifier: 
-  ShowPackageView: 0
+  ShowPackageView: 1
   EnableAddressable: 1
   UniqueBundleName: 1
   ShowEditorAlias: 0
   Packages:
-  - PackageName: MainGame
+  - PackageName: MainPackage
     PackageDesc: "\u4E3B\u6E38\u620F\u5305"
     Groups:
     - GroupName: Building
@@ -65,3 +65,6 @@ MonoBehaviour:
         PackRuleName: PackDirectory
         FilterRuleName: CollectAll
         AssetTags: 
+  - PackageName: DefaultPackage
+    PackageDesc: "\u9996\u5305"
+    Groups: []

@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 
 namespace QuickGameFramework.Runtime {
-    public class CoroutineManager : MonoSingleton<CoroutineManager> {
+    public class CoroutineManager : MonoBehaviour {
         /// <summary>
         /// 开启一个协程
         /// </summary>

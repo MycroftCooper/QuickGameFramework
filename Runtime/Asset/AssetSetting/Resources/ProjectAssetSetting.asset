@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ProjectAssetSetting
   m_EditorClassIdentifier: 
   playMode: 0
-  defaultPackageName: DefaultPackage
+  defaultPackageName: MainPackage
   gameVersion: v1.0
   hostServerIP: 
-  fallbackHostServerIP: 
+  backupHostServerIP: 

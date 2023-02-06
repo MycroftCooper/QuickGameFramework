@@ -9,11 +9,11 @@ using YooAsset;
 using Object = UnityEngine.Object;
 
 namespace QuickGameFramework.Runtime {
-	public class AssetManager : Singleton<AssetManager> {
-		private ProjectAssetSetting _projectAssetSetting;
-		private Dictionary<string, AssetsPackage> _packages;
+	public class AssetManager {
+		private readonly ProjectAssetSetting _projectAssetSetting;
+		private readonly Dictionary<string, AssetsPackage> _packages;
 
-		public void Init() {
+		public AssetManager() {
 			_projectAssetSetting = Resources.Load<ProjectAssetSetting>("ProjectAssetSetting");
 			if (_projectAssetSetting == null) {
 				QLog.Error($"QuickGameFramework>Asset>项目资源设置缺失！加载失败!\n"+
@@ -22,7 +22,8 @@ namespace QuickGameFramework.Runtime {
 			}
 
 			_packages = new Dictionary<string, AssetsPackage>();
-			CoroutineManager.Instance.StartCoroutine(InitPackage());
+			YooAssets.Initialize();
+			GameEntry.CoroutineManager.StartCoroutine(InitPackage());
 		}
 
 		#region 资源加载API

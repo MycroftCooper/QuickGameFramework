@@ -6,7 +6,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace QuickGameFramework.Runtime {
-	public class ModuleManager:MonoSingleton<ModuleManager> {
+	public class ModuleManager:MonoBehaviour {
 		[ShowInInspector]
 		private readonly SortedSet<IModule> _modules = new (new ModuleComparer());
 		private void Awake() {
@@ -59,14 +59,14 @@ namespace QuickGameFramework.Runtime {
 				QLog.Error($"QuickGameFramework>Module>模块<{typeof(T)}>创建失败:该模块已存在!");
 				return null;
 			}
-			
-			// 如果没有设置优先级
-			if (priority < 0) {
-				priority = _modules.Max.Priority + 1;
-			}
 
 			T module = Activator.CreateInstance<T>();
+			// 如果没有设置优先级
+			if (!module.IsFrameworkModule && priority < 0) {
+				priority = _modules.Count > 0 ? _modules.Max.Priority + 1 : 0;
+			}
 			module.Priority = priority;
+			
 			module.OnModuleCreate(createParam);
 			_modules.Add(module);
 			QLog.Log($"QuickGameFramework>Module>模块<{typeof(T)}>创建成功!优先级:{priority}");
