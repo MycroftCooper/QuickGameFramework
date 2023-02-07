@@ -7,8 +7,7 @@ using UnityEngine;
 
 namespace QuickGameFramework.Runtime {
 	public class ModuleManager:MonoBehaviour {
-		[ShowInInspector]
-		private readonly SortedSet<IModule> _modules = new (new ModuleComparer());
+		[ShowInInspector] private readonly SortedSet<IModule> _modules = new SortedSet<IModule>(new ModuleComparer());
 		private void Awake() {
 			QLog.Log($"QuickGameFramework>Module> 模块化系统成功初始化!");
 		}

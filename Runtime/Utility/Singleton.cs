@@ -17,7 +17,7 @@ namespace QuickGameFramework.Runtime {
 
     public class MonoSingleton<T> : MonoBehaviour where T : MonoBehaviour {
         private static T _instance;
-        private static readonly object Lock = new ();
+        private static readonly object Lock = new object();
         /// <summary>
         /// 程序是否正在退出
         /// </summary>
