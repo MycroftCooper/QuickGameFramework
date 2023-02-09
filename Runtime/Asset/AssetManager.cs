@@ -40,7 +40,7 @@ namespace QuickGameFramework.Runtime {
 			return handle;
 		}
 
-		public AssetOperationHandle[] LoadAssetsAsync<T>(string tag, Action<T> callback, string packageName = null)
+		public AssetOperationHandle[] LoadAssetsAsyncByTag<T>(string tag, Action<T> callback, string packageName = null)
 			where T : Object {
 			if (!GetAssetPackage(packageName, out AssetsPackage package)) {
 				QLog.Error($"QuickGameFramework>Asset>Tag:<{tag}>相关资源异步加载失败!");
@@ -53,17 +53,20 @@ namespace QuickGameFramework.Runtime {
 				return null;
 			}
 
-			var output = new AssetOperationHandle[infos.Length];
-			for (int i = 0; i < infos.Length; i++) {
-				var path = infos[i].Address;
+			var output = new List<AssetOperationHandle>();
+			foreach (var info in infos) {
+				if (info.AssetType != typeof(T)) {
+					continue;
+				}
+				var path = info.Address;
 				var handle = package.LoadAssetAsync<T>(path);
 				if (callback != null) {
 					handle.Completed += _=> callback((T)handle.AssetObject);
 				}
 				handle.Completed += _ => { QLog.Log($"QuickGameFramework>Asset>资源<{path}>异步加载成功!"); };
-				output[i] = handle;
+				output.Add(handle);
 			}
-			return output;
+			return output.ToArray();
 		}
 
 		public AssetOperationHandle LoadAssetSync<T>(out T asset ,string path, string packageName = null) where T : Object {
@@ -74,8 +77,37 @@ namespace QuickGameFramework.Runtime {
 			}
 			var handle = package.LoadAssetSync<T>(path);
 			asset =(T) package.LoadAssetSync<T>(path).AssetObject;
-			QLog.Log($"QuickGameFramework>Asset>资源<{path}>！同步加载成功!");
+			QLog.Log($"QuickGameFramework>Asset>资源<{path}>同步加载成功!");
 			return handle;
+		}
+		
+		public AssetOperationHandle[] LoadAssetsSyncByTag<T>(string tag, Action<T> callback, string packageName = null)
+			where T : Object {
+			if (!GetAssetPackage(packageName, out AssetsPackage package)) {
+				QLog.Error($"QuickGameFramework>Asset>Tag:<{tag}>相关资源同步加载失败!");
+				return null;
+			}
+
+			AssetInfo[] infos = package.GetAssetInfos(tag);
+			if (infos == null || infos.Length == 0) {
+				QLog.Error($"QuickGameFramework>Asset>Tag:<{tag}>相关资源同步加载失败!tag不存在或该tag下无资源!");
+				return null;
+			}
+
+			var output = new List<AssetOperationHandle>();
+			foreach (var info in infos) {
+				if (info.AssetType != typeof(T)) {
+					continue;
+				}
+				var path = info.Address;
+				var handle = package.LoadAssetSync<T>(path);
+				if (callback != null) {
+					handle.Completed += _=> callback((T)handle.AssetObject);
+				}
+				handle.Completed += _ => { QLog.Log($"QuickGameFramework>Asset>资源<{path}>异步加载成功!"); };
+				output.Add(handle);
+			}
+			return output.ToArray();
 		}
 
 		public SceneOperationHandle LoadSceneAsync(string path, string packageName = null, LoadSceneMode sceneMode = LoadSceneMode.Single, bool activateOnLoad = true) {
