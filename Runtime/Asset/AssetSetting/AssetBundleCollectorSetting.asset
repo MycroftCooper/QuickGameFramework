@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 185f6993d5150494d98da50e26cb1c25, type: 3}
   m_Name: AssetBundleCollectorSetting
   m_EditorClassIdentifier: 
-  ShowPackageView: 1
+  ShowPackageView: 0
   EnableAddressable: 1
   UniqueBundleName: 1
-  ShowEditorAlias: 0
+  ShowEditorAlias: 1
   Packages:
   - PackageName: MainPackage
     PackageDesc: "\u4E3B\u6E38\u620F\u5305"
@@ -28,40 +28,47 @@ MonoBehaviour:
       - CollectPath: Assets/GameRes/Building/FirePowerStation
         CollectorGUID: 5ec842e564770c4418878fe79d912b3d
         CollectorType: 0
-        AddressRuleName: AddressByFileName
+        AddressRuleName: AddressByGroupAndFileName
         PackRuleName: PackDirectory
         FilterRuleName: CollectAll
         AssetTags: 
     - GroupName: Block
       GroupDesc: "\u5730\u5757\u7EC4"
-      AssetTags: 
+      AssetTags: Block
       ActiveRuleName: EnableGroup
       Collectors:
       - CollectPath: Assets/GameRes/Block/Desert
         CollectorGUID: 5fd8a283af8425d4b83e82635c125917
         CollectorType: 0
-        AddressRuleName: AddressByFileName
+        AddressRuleName: AddressByGroupAndFileName
         PackRuleName: PackDirectory
         FilterRuleName: CollectAll
         AssetTags: 
       - CollectPath: Assets/GameRes/Block/Gobi
         CollectorGUID: 679ad50996b757b4a8e6df2d92ec6bc5
         CollectorType: 0
-        AddressRuleName: AddressByFileName
+        AddressRuleName: AddressByGroupAndFileName
         PackRuleName: PackDirectory
         FilterRuleName: CollectAll
         AssetTags: 
       - CollectPath: Assets/GameRes/Block/Oasis
         CollectorGUID: 38f5b40fd14b2b145a03bb4f6dd05ebe
         CollectorType: 0
-        AddressRuleName: AddressByFileName
+        AddressRuleName: AddressByGroupAndFileName
         PackRuleName: PackDirectory
         FilterRuleName: CollectAll
         AssetTags: 
       - CollectPath: Assets/GameRes/Block/BlockElements
         CollectorGUID: 317a317d1026d82498d399c783a726c4
         CollectorType: 0
-        AddressRuleName: AddressByFileName
+        AddressRuleName: AddressByGroupAndFileName
+        PackRuleName: PackDirectory
+        FilterRuleName: CollectAll
+        AssetTags: BlockEnements
+      - CollectPath: Assets/GameRes/Block/Base
+        CollectorGUID: 2ce16aabd6d883342bff50ad1e8d836b
+        CollectorType: 0
+        AddressRuleName: AddressByGroupAndFileName
         PackRuleName: PackDirectory
         FilterRuleName: CollectAll
         AssetTags: 

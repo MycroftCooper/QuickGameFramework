@@ -10,14 +10,14 @@ using Object = UnityEngine.Object;
 
 namespace QuickGameFramework.Runtime {
 	public class AssetManager {
-		private readonly ProjectAssetSetting _projectAssetSetting;
-		private readonly Dictionary<string, AssetsPackage> _packages;
+		private ProjectAssetSetting _projectAssetSetting;
+		private Dictionary<string, AssetsPackage> _packages;
 
-		public AssetManager() {
+		public void Init() {
 			_projectAssetSetting = Resources.Load<ProjectAssetSetting>("ProjectAssetSetting");
 			if (_projectAssetSetting == null) {
 				QLog.Error($"QuickGameFramework>Asset>项目资源设置缺失！加载失败!\n"+
-				              "请在<Resources目录>下增加<ProjectAssetSetting>\n");
+				           "请在<Resources目录>下增加<ProjectAssetSetting>\n");
 				return;
 			}
 
@@ -29,20 +29,46 @@ namespace QuickGameFramework.Runtime {
 		#region 资源加载API
 		public AssetOperationHandle LoadAssetAsync<T>(string path, Action<T> callback ,string packageName = null) where T : Object {
 			if (!GetAssetPackage(packageName, out AssetsPackage package)) {
-				QLog.Error($"QuickGameFramework>Asset>资源<{path}>！异步加载失败!");
+				QLog.Error($"QuickGameFramework>Asset>资源<{path}>异步加载失败!");
 				return null;
 			}
 			var handle = package.LoadAssetAsync<T>(path);
 			if (callback != null) {
 				handle.Completed += _=> callback((T)handle.AssetObject);
 			}
-			handle.Completed += _ => { QLog.Log($"QuickGameFramework>Asset>资源<{path}>！异步加载成功!"); };
+			handle.Completed += _ => { QLog.Log($"QuickGameFramework>Asset>资源<{path}>异步加载成功!"); };
 			return handle;
 		}
-		
+
+		public AssetOperationHandle[] LoadAssetsAsync<T>(string tag, Action<T> callback, string packageName = null)
+			where T : Object {
+			if (!GetAssetPackage(packageName, out AssetsPackage package)) {
+				QLog.Error($"QuickGameFramework>Asset>Tag:<{tag}>相关资源异步加载失败!");
+				return null;
+			}
+
+			AssetInfo[] infos = package.GetAssetInfos(tag);
+			if (infos == null || infos.Length == 0) {
+				QLog.Error($"QuickGameFramework>Asset>Tag:<{tag}>相关资源异步加载失败!tag不存在或该tag下无资源!");
+				return null;
+			}
+
+			var output = new AssetOperationHandle[infos.Length];
+			for (int i = 0; i < infos.Length; i++) {
+				var path = infos[i].Address;
+				var handle = package.LoadAssetAsync<T>(path);
+				if (callback != null) {
+					handle.Completed += _=> callback((T)handle.AssetObject);
+				}
+				handle.Completed += _ => { QLog.Log($"QuickGameFramework>Asset>资源<{path}>异步加载成功!"); };
+				output[i] = handle;
+			}
+			return output;
+		}
+
 		public AssetOperationHandle LoadAssetSync<T>(out T asset ,string path, string packageName = null) where T : Object {
 			if (!GetAssetPackage(packageName, out AssetsPackage package)) {
-				QLog.Error($"QuickGameFramework>Asset>资源<{path}>！同步加载失败!");
+				QLog.Error($"QuickGameFramework>Asset>资源<{path}>同步加载失败!");
 				asset = null;
 				return null;
 			}
@@ -62,7 +88,7 @@ namespace QuickGameFramework.Runtime {
 			return handle;
 		}
 
-		public AssetOperationHandle LoadPrefabAsync(string path, (Transform parent, Vector3 pos, Quaternion rotation) gameObjectInfo ,Action<GameObject> callback = null ,string packageName = null) {
+		public AssetOperationHandle LoadAndInitPrefabAsync(string path, (Transform parent, Vector3 pos, Quaternion rotation) gameObjectInfo ,Action<GameObject> callback = null ,string packageName = null) {
 			AssetOperationHandle handle = LoadAssetAsync<GameObject>(path, null, packageName);
 			if (handle == null) {
 				QLog.Error($"QuickGameFramework>Asset>预制体<{path}>！异步加载失败!");

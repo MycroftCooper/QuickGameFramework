@@ -8,10 +8,10 @@ namespace QuickGameFramework.Runtime {
 
         public virtual ValueType Data { get; set; }
 
-        private EntityFactory _factory;
+        private IEntityFactory _factory;
 
 
-        internal void Init(int entityID, string entityAssetName,EntityFactory factory, ValueType data = null) {
+        internal void Init(int entityID, string entityAssetName,IEntityFactory factory, ValueType data = null) {
             ID = entityID;
             AssetName = entityAssetName;
             Data = data;

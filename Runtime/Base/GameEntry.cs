@@ -8,9 +8,10 @@ public class GameEntry : MonoSingleton<GameEntry> {
     public static AssetManager AssetManager;
     void Awake() {
         IsGlobal = true;
-        ModuleManager = transform.Find("ModuleManager").GetComponent<ModuleManager>();
-        CoroutineManager = transform.Find("CoroutineManager").GetComponent<CoroutineManager>();
+        ModuleManager = GetComponent<ModuleManager>();
+        CoroutineManager = GetComponent<CoroutineManager>();
         ProcedureManager = ModuleManager.CreateModule<ProcedureManager>();
         AssetManager = new AssetManager();
+        AssetManager.Init();
     }
 }
