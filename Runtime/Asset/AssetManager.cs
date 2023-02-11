@@ -13,7 +13,7 @@ namespace QuickGameFramework.Runtime {
 		private ProjectAssetSetting _projectAssetSetting;
 		private Dictionary<string, AssetsPackage> _packages;
 
-		public void Init() {
+		public void Init(Action callBack = null) {
 			_projectAssetSetting = Resources.Load<ProjectAssetSetting>("ProjectAssetSetting");
 			if (_projectAssetSetting == null) {
 				QLog.Error($"QuickGameFramework>Asset>项目资源设置缺失！加载失败!\n"+
@@ -23,7 +23,7 @@ namespace QuickGameFramework.Runtime {
 
 			_packages = new Dictionary<string, AssetsPackage>();
 			YooAssets.Initialize();
-			GameEntry.CoroutineManager.StartCoroutine(InitPackage());
+			GameEntry.CoroutineMgr.StartCoroutine(InitPackage(callBack));
 		}
 
 		#region 资源加载API
@@ -36,7 +36,7 @@ namespace QuickGameFramework.Runtime {
 			if (callback != null) {
 				handle.Completed += _=> callback((T)handle.AssetObject);
 			}
-			handle.Completed += _ => { QLog.Log($"QuickGameFramework>Asset>资源<{path}>异步加载成功!"); };
+			handle.Completed += LogLoadSuccess;
 			return handle;
 		}
 
@@ -63,7 +63,7 @@ namespace QuickGameFramework.Runtime {
 				if (callback != null) {
 					handle.Completed += _=> callback((T)handle.AssetObject);
 				}
-				handle.Completed += _ => { QLog.Log($"QuickGameFramework>Asset>资源<{path}>异步加载成功!"); };
+				handle.Completed += LogLoadSuccess;
 				output.Add(handle);
 			}
 			return output.ToArray();
@@ -77,7 +77,8 @@ namespace QuickGameFramework.Runtime {
 			}
 			var handle = package.LoadAssetSync<T>(path);
 			asset =(T) package.LoadAssetSync<T>(path).AssetObject;
-			QLog.Log($"QuickGameFramework>Asset>资源<{path}>同步加载成功!");
+			handle.Completed += LogLoadSuccess;
+
 			return handle;
 		}
 		
@@ -104,7 +105,7 @@ namespace QuickGameFramework.Runtime {
 				if (callback != null) {
 					handle.Completed += _=> callback((T)handle.AssetObject);
 				}
-				handle.Completed += _ => { QLog.Log($"QuickGameFramework>Asset>资源<{path}>异步加载成功!"); };
+				handle.Completed += LogLoadSuccess;
 				output.Add(handle);
 			}
 			return output.ToArray();
@@ -116,7 +117,9 @@ namespace QuickGameFramework.Runtime {
 				return null;
 			}
 			SceneOperationHandle handle = package.LoadSceneAsync(path, sceneMode, activateOnLoad);
-			handle.Completed += _ => { QLog.Log($"QuickGameFramework>Asset>场景<{path}>！异步加载成功!"); };
+			handle.Completed += _ => {
+				QLog.Log($"QuickGameFramework>Asset>场景<{path}>！异步加载成功!");
+			};
 			return handle;
 		}
 
@@ -127,10 +130,12 @@ namespace QuickGameFramework.Runtime {
 				return null;
 			}
 			handle.Completed += (x) => {
+				if (handle.AssetObject == null) return;
 				var target = x.InstantiateSync(gameObjectInfo.pos, gameObjectInfo.rotation, gameObjectInfo.parent);
 				callback?.Invoke(target);
 				QLog.Log($"QuickGameFramework>Asset>预制体<{path}>！异步加载并实例化成功!");
 			};
+			handle.Completed += LogLoadSuccess;
 			return handle;
 		}
 		#endregion
@@ -177,6 +182,13 @@ namespace QuickGameFramework.Runtime {
 			UpdatePackageDict();
 		}
 
+		private void LogLoadSuccess(AssetOperationHandle handle) {
+			if (handle.AssetObject != null) {
+				QLog.Log($"QuickGameFramework>Asset>资源<{handle.AssetObject.name}>加载成功!");
+			} else {
+				QLog.Error($"QuickGameFramework>Asset>资源<{handle.AssetObject.name}>加载失败!");
+			}
+		}
 		
 		private void UpdatePackageDict() {
 			List<string> needRemovePackages = _packages.Keys.Where(
@@ -206,7 +218,7 @@ namespace QuickGameFramework.Runtime {
 			return false;
 		}
 		
-		private IEnumerator InitPackage() {
+		private IEnumerator InitPackage(Action callBack) {
 			var defaultPackageName = _projectAssetSetting.defaultPackageName;
 			var playMode = _projectAssetSetting.playMode;
 
@@ -258,6 +270,7 @@ namespace QuickGameFramework.Runtime {
 			} else {
 				QLog.Log($"QuickGameFramework>Asset>初始资源包<{defaultPackageName}>以<{playMode}模式>加载成功!");
 			}
+			callBack?.Invoke();
 		}
 		
 		private string GetHostServerURL(bool isBackup) {

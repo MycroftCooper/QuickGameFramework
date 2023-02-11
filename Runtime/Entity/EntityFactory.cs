@@ -1,10 +1,10 @@
 using System;
 
 namespace QuickGameFramework.Runtime {
-    public interface IEntityFactory {
-        public void PreLoadAsset();
+    public interface IEntityFactory<out T>where T:Entity {
+        public void PreLoadAsset(Action callBack = null);
         public void Init();
-        public Entity CreateEntity(int entityID, string entityAssetName, ValueType data = null);
+        public T CreateEntity(string entityID, object data = null);
         public void RecycleEntity(Entity entity);
     }
 }

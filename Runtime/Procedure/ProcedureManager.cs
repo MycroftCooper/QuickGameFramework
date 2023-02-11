@@ -54,7 +54,7 @@ namespace QuickGameFramework.Procedure {
         /// <returns>要获取的流程。</returns>
         public T GetProcedure<T>() where T : Procedure {
             if (HasProcedure<T>()) return (T)_procedures[typeof(T)];
-            QLog.Error($"QuickGameFramework>Procedure>获取流程<{typeof(T).Name}>失败，该流程未开启！");
+            QLog.Error($"QuickGameFramework>Procedure>获取流程[{typeof(T).Name}]失败，该流程未开启！");
             return default;
         }
         
@@ -65,7 +65,7 @@ namespace QuickGameFramework.Procedure {
         /// <returns>要获取的流程。</returns>
         public Procedure GetProcedure(Type procedureType) {
             if (HasProcedure(procedureType)) return _procedures[procedureType];
-            QLog.Error($"QuickGameFramework>Procedure>获取流程<{procedureType.Name}>失败，该流程未开启！");
+            QLog.Error($"QuickGameFramework>Procedure>获取流程[{procedureType.Name}]失败，该流程未开启！");
             return default;
         }
         
@@ -76,13 +76,13 @@ namespace QuickGameFramework.Procedure {
         /// <param name="parameters">流程初始化参数</param>
         public void StartProcedure<T>(params object[] parameters) where T : Procedure,new() {
             if (HasProcedure<T>()) {
-                QLog.Error($"QuickGameFramework>Procedure>流程<{typeof(T).Name}>开启失败，已存在相同流程！");
+                QLog.Error($"QuickGameFramework>Procedure>流程[{typeof(T).Name}]开启失败，已存在相同流程！");
                 return;
             }
             Procedure target = new T();
-            target.Init(parameters);
             _procedures.Add(typeof(T), target);
-            target.Enter();
+            target.Enter(parameters);
+            QLog.Log($"QuickGameFramework>Procedure>流程[{typeof(T).Name}]开启成功！");
         }
 
         /// <summary>
@@ -92,18 +92,18 @@ namespace QuickGameFramework.Procedure {
         /// <param name="parameters">流程初始化参数</param>
         public void StartProcedure(Type procedureType, params object[] parameters) {
             if (procedureType.BaseType != typeof(Procedure)) {
-                QLog.Error($"QuickGameFramework>Procedure>流程<{procedureType.Name}>开启失败，该类型不是流程<Procedure>！");
+                QLog.Error($"QuickGameFramework>Procedure>流程[{procedureType.Name}]开启失败，该类型不是流程<Procedure>！");
                 return;
             }
             if (HasProcedure(procedureType)) {
-                QLog.Error($"QuickGameFramework>Procedure>流程<{procedureType.Name}>开启失败，已存在相同流程！");
+                QLog.Error($"QuickGameFramework>Procedure>流程[{procedureType.Name}]开启失败，已存在相同流程！");
                 return;
             }
 
             Procedure target = QuickReflect.CreateInstance<Procedure>(procedureType.FullName);
-            target.Init(parameters);
             _procedures.Add(procedureType, target);
-            target.Enter();
+            target.Enter(parameters);
+            QLog.Log($"QuickGameFramework>Procedure>流程[{procedureType.Name}]开启成功！");
         }
 
         /// <summary>

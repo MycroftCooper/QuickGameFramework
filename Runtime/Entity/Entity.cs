@@ -3,25 +3,20 @@ using UnityEngine;
 
 namespace QuickGameFramework.Runtime {
     public abstract class Entity : MonoBehaviour {
-        public int ID { get; private set; }
-        public string AssetName { get; private set; }
+        public string ID { get; private set; }
 
         public virtual ValueType Data { get; set; }
 
-        private IEntityFactory _factory;
+        private IEntityFactory<Entity> _factory;
 
 
-        internal void Init(int entityID, string entityAssetName,IEntityFactory factory, ValueType data = null) {
+        public virtual void Init(string entityID, IEntityFactory<Entity> factory, ValueType data = null) {
             ID = entityID;
-            AssetName = entityAssetName;
+            name = ID;
             Data = data;
             _factory = factory;
-            OnInit();
         }
-        protected virtual void OnInit() {
-            QLog.Error($"QuickGameFramework>Entity>Error>{ID}-{AssetName} 该实体未实现OnInit");
-        }
-        
+
         public void Recycle() {
             _factory.RecycleEntity(this);
         }

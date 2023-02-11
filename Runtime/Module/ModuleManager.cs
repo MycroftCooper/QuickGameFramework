@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using MycroftToolkit.QuickCode;
 using Sirenix.OdinInspector;
@@ -53,13 +52,13 @@ namespace QuickGameFramework.Runtime {
 		/// </summary>
 		/// <param name="createParam">附加参数</param>
 		/// <param name="priority">运行时的优先级，从0开始往大数执行。如果没有设置优先级，那么会按照添加顺序执行</param>
-		public T CreateModule<T>(int priority = -1, params System.Object[] createParam) where T : class, IModule {
+		public T CreateModule<T>(int priority = -1, params System.Object[] createParam) where T : class, IModule, new() {
 			if (Contains<T>()) {
 				QLog.Error($"QuickGameFramework>Module>模块<{typeof(T)}>创建失败:该模块已存在!");
 				return null;
 			}
-
-			T module = Activator.CreateInstance<T>();
+			
+			T module = new T();
 			// 如果没有设置优先级
 			if (!module.IsFrameworkModule && priority < 0) {
 				priority = _modules.Count > 0 ? _modules.Max.Priority + 1 : 0;
