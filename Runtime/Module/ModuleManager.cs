@@ -5,7 +5,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace QuickGameFramework.Runtime {
-	public class ModuleManager:MonoBehaviour {
+	public class ModuleManager : MonoBehaviour {
 		[ShowInInspector] private readonly SortedSet<IModule> _modules = new SortedSet<IModule>(new ModuleComparer());
 		private void Awake() {
 			QLog.Log($"QuickGameFramework>Module> 模块化系统成功初始化!");
@@ -65,8 +65,8 @@ namespace QuickGameFramework.Runtime {
 			}
 			module.Priority = priority;
 			
-			module.OnModuleCreate(createParam);
 			_modules.Add(module);
+			module.OnModuleCreate(createParam);
 			QLog.Log($"QuickGameFramework>Module>模块<{typeof(T)}>创建成功!优先级:{priority}");
 			return module;
 		}

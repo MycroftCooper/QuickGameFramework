@@ -4,28 +4,30 @@ using MycroftToolkit.QuickCode;
 using QuickGameFramework.Runtime;
 
 namespace QuickGameFramework.Procedure {
-    public class ProcedureManager:IModule {
+    public class ProcedureManager : IModule {
         private Dictionary<Type, Procedure> _procedures;
 
         /// <summary>
         /// 获取游戏框架模块优先级。
         /// </summary>
         /// <remarks>优先级较高的模块会优先轮询，并且关闭操作会后进行。</remarks>
-        public int Priority { get => -2; set { } }
+        public int Priority {
+            get => -2;
+            set { }
+        }
+
         public bool IsFrameworkModule => true;
 
         public void OnModuleCreate(params object[] createParam) {
             _procedures = new Dictionary<Type, Procedure>();
         }
-        
+
         public void OnModuleUpdate(float intervalSeconds) {
-            _procedures.Values.ForEach((x)=>x.Update(intervalSeconds));
+            _procedures.Values.ForEach((x) => x.Update(intervalSeconds));
         }
-        
+
         public void OnModuleDestroy() {
-            _procedures.Values.ForEach((x) => {
-                x.Destroy();
-            });
+            _procedures.Values.ForEach((x) => { x.Destroy(); });
             _procedures.Clear();
         }
 
@@ -37,7 +39,7 @@ namespace QuickGameFramework.Procedure {
         public bool HasProcedure<T>() where T : Procedure {
             return _procedures.ContainsKey(typeof(T));
         }
-        
+
         /// <summary>
         /// 是否存在流程。
         /// </summary>
@@ -57,7 +59,7 @@ namespace QuickGameFramework.Procedure {
             QLog.Error($"QuickGameFramework>Procedure>获取流程[{typeof(T).Name}]失败，该流程未开启！");
             return default;
         }
-        
+
         /// <summary>
         /// 获取流程。
         /// </summary>
@@ -68,17 +70,18 @@ namespace QuickGameFramework.Procedure {
             QLog.Error($"QuickGameFramework>Procedure>获取流程[{procedureType.Name}]失败，该流程未开启！");
             return default;
         }
-        
+
         /// <summary>
         /// 开始流程。
         /// </summary>
         /// <typeparam name="T">要开始的流程类型。</typeparam>
         /// <param name="parameters">流程初始化参数</param>
-        public void StartProcedure<T>(params object[] parameters) where T : Procedure,new() {
+        public void StartProcedure<T>(params object[] parameters) where T : Procedure, new() {
             if (HasProcedure<T>()) {
                 QLog.Error($"QuickGameFramework>Procedure>流程[{typeof(T).Name}]开启失败，已存在相同流程！");
                 return;
             }
+
             Procedure target = new T();
             _procedures.Add(typeof(T), target);
             target.Enter(parameters);
@@ -95,6 +98,7 @@ namespace QuickGameFramework.Procedure {
                 QLog.Error($"QuickGameFramework>Procedure>流程[{procedureType.Name}]开启失败，该类型不是流程<Procedure>！");
                 return;
             }
+
             if (HasProcedure(procedureType)) {
                 QLog.Error($"QuickGameFramework>Procedure>流程[{procedureType.Name}]开启失败，已存在相同流程！");
                 return;
@@ -112,7 +116,7 @@ namespace QuickGameFramework.Procedure {
         public float GetProcedureDuration<T>() where T : Procedure {
             return GetProcedure<T>().ProcessDuration;
         }
-        
+
         /// <summary>
         /// 获取当前流程持续时间。
         /// </summary>
