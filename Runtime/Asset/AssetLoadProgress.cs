@@ -18,7 +18,7 @@ namespace QuickGameFramework.Runtime {
         public bool IsComplete => _completeHandleNum == Handles.Count;
         public Action Completed;
         
-        public List<AssetOperationHandle> Handles { get; private set; }
+        public List<AssetOperationHandle> Handles { get; }
         private int _completeHandleNum;
 
         public AssetLoadProgress() {
