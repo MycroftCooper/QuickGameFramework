@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using FairyGUI;
 using MycroftToolkit.QuickCode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -138,6 +139,7 @@ namespace QuickGameFramework.Runtime {
 			handle.Completed += LogLoadSuccess;
 			return handle;
 		}
+
 		#endregion
 		
 		public bool ReleaseAsset(AssetOperationHandle handle) {

@@ -6,6 +6,8 @@ namespace QuickGameFramework.Runtime {
     public class ProjectAssetSetting : ScriptableObject {
         public EPlayMode playMode;
         public string defaultPackageName = "DefaultPackage";
+        public string uiResPath;
+        public string uiAssetsPackageName;
         public string gameVersion = "v1.0";
 
         public string hostServerIP;

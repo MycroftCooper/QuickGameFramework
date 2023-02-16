@@ -8,6 +8,7 @@ namespace QuickGameFramework.Runtime {
         public static CoroutineManager CoroutineMgr;
         public static DataTableManager DataTableMgr;
         public static AssetManager AssetMgr;
+        public static UIManager UIMgr;
 
         void Awake() {
             IsGlobal = true;
@@ -20,6 +21,7 @@ namespace QuickGameFramework.Runtime {
             AssetMgr = new AssetManager();
             AssetMgr.Init(() => {
                 ProcedureMgr.StartProcedure(Type.GetType("EnterGameProcedure"));
+                UIMgr = new UIManager();
             });
         }
     }
