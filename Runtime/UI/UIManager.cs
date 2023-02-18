@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using FairyGUI;
 using MycroftToolkit.QuickCode;
-using UnityEngine;
 using YooAsset;
 
 namespace QuickGameFramework.Runtime {
@@ -11,16 +10,16 @@ namespace QuickGameFramework.Runtime {
         private readonly Dictionary<string, AssetOperationHandle> _handleDict;
 
         public UIManager() {
-            _projectAssetSetting = Resources.Load<ProjectAssetSetting>("ProjectAssetSetting");
+            _projectAssetSetting = GameEntry.ConfigMgr.ProjectAssetSetting;
             _handleDict = new Dictionary<string, AssetOperationHandle>();
         }
 
-        #region UI资源加载相关
-        public bool HasLoadPackage(string uiPackageName) {
+        #region UI资源预加载相关
+        public bool HasPreloadPackage(string uiPackageName) {
             return _handleDict.ContainsKey(uiPackageName);
         }
 
-        public void LoadPackage(string uiPackageName) {
+        public void PreloadPackage(string uiPackageName) {
             if (_handleDict.ContainsKey(uiPackageName)) {
                 QLog.Error($"QuickGameFramework>UIManager>FUI包[{uiPackageName}]加载失败！ 该FUI包已加载，请勿重复加载！");
                 return;
@@ -28,7 +27,7 @@ namespace QuickGameFramework.Runtime {
             UIPackage.AddPackage(uiPackageName, LoadFunc);
         }
 
-        public void ReleasePackage(string uiPackageName) {
+        public void ReleasePreloadPackage(string uiPackageName) {
             if (_handleDict.ContainsKey(uiPackageName)) {
                 QLog.Error($"QuickGameFramework>UIManager>FUI包[{uiPackageName}]释放失败！ 该FUI包未加载！");
                 return;
@@ -38,7 +37,7 @@ namespace QuickGameFramework.Runtime {
             _handleDict.Remove(uiPackageName);
         }
 
-        public void ReleaseAllPackage() {
+        public void ReleaseAllPreloadPackage() {
             _handleDict.ForEach(_ => {
                 UIPackage.RemovePackage(_.Key);
                 _.Value.Release();
@@ -57,10 +56,23 @@ namespace QuickGameFramework.Runtime {
         }
         #endregion
 
-        public GComponent CreateFUIComponent(string pkgName, string componentName) {
-            GComponent view = UIPackage.CreateObject("","").asCom;
+        #region UI组件动态生成相关
+        public GComponent CreateFguiComponentSync(string pkgName, string componentName) {
+            GComponent view = UIPackage.CreateObject(pkgName,componentName).asCom;
+            view.displayObject.gameObject.AddComponent<UIAssetLoader>();
             return view;
         }
         
+        public void CreateFguiComponentASync(string pkgName, string componentName, UIPackage.CreateObjectCallback callback) {
+            UIPackage.CreateObjectAsync(pkgName,componentName, (_)=> {
+                _.displayObject.gameObject.AddComponent<UIAssetLoader>();
+                callback?.Invoke(_);
+            });
+        }
+
+        public void DisposeFguiComponent(GComponent target) {
+            target.Dispose();
+        }
+        #endregion
     }
 }

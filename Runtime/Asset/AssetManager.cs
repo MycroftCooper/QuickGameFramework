@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using FairyGUI;
 using MycroftToolkit.QuickCode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -15,13 +14,7 @@ namespace QuickGameFramework.Runtime {
 		private Dictionary<string, AssetsPackage> _packages;
 
 		public void Init(Action callBack = null) {
-			_projectAssetSetting = Resources.Load<ProjectAssetSetting>("ProjectAssetSetting");
-			if (_projectAssetSetting == null) {
-				QLog.Error($"QuickGameFramework>Asset>项目资源设置缺失！加载失败!\n"+
-				           "请在<Resources目录>下增加<ProjectAssetSetting>\n");
-				return;
-			}
-
+			_projectAssetSetting = GameEntry.ConfigMgr.ProjectAssetSetting;
 			_packages = new Dictionary<string, AssetsPackage>();
 			YooAssets.Initialize();
 			GameEntry.CoroutineMgr.StartCoroutine(InitPackage(callBack));

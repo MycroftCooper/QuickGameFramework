@@ -9,11 +9,13 @@ namespace QuickGameFramework.Runtime {
         public static DataTableManager DataTableMgr;
         public static AssetManager AssetMgr;
         public static UIManager UIMgr;
+        public static ConfigManager ConfigMgr;
 
-        void Awake() {
+        private void Awake() {
             IsGlobal = true;
             
             CoroutineMgr = GetComponent<CoroutineManager>();
+            ConfigMgr = new ConfigManager();
             DataTableMgr = new DataTableManager();
             ModuleMgr = GetComponent<ModuleManager>();
             ProcedureMgr = ModuleMgr.CreateModule<ProcedureManager>();
