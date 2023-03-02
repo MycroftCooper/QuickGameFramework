@@ -1,5 +1,6 @@
 using System;
 using QuickGameFramework.Procedure;
+using UnityEngine.SceneManagement;
 
 namespace QuickGameFramework.Runtime {
     public class GameEntry : MonoSingleton<GameEntry> {
@@ -22,8 +23,9 @@ namespace QuickGameFramework.Runtime {
             
             AssetMgr = new AssetManager();
             AssetMgr.Init(() => {
-                ProcedureMgr.StartProcedure(Type.GetType("EnterGameProcedure"));
+                // ProcedureMgr.StartProcedure(Type.GetType("EnterGameProcedure"));
                 UIMgr = new UIManager();
+                SceneManager.LoadScene("StartScene");
             });
         }
     }
