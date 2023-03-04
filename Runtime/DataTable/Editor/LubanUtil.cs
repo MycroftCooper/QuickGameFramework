@@ -7,12 +7,12 @@ public static class LubanUtil {
     private const string SeverPath = @"Luban/";
     private const string TablePath = "Assets/GameMain/DataTables";
 
-    [MenuItem("QuickResources/LubanUtil/OpenExcelExplorer")] 
+    [MenuItem("Tools/LubanUtil/OpenExcelExplorer")] 
     public static void OpenExcelExplorer() {
         EditorUtility.RevealInFinder(TablePath+"/Data/__tables__.xlsx");
     } 
     
-    [MenuItem("QuickResources/LubanUtil/CheckExcel")] 
+    [MenuItem("Tools/LubanUtil/CheckExcel")] 
     public static void CheckExcel() {
         Process proc = new Process();//new 一个Process对象 
         
@@ -23,7 +23,7 @@ public static class LubanUtil {
         proc.WaitForExit(); 
     } 
     
-    [MenuItem("QuickResources/LubanUtil/ImportExcel")] 
+    [MenuItem("Tools/LubanUtil/ImportExcel")] 
     public static void ImportExcel() { 
         CleanJson(); 
         Process proc = new Process();//new 一个Process对象 
@@ -35,7 +35,7 @@ public static class LubanUtil {
         proc.WaitForExit(); 
     }
 
-    [MenuItem("QuickResources/LubanUtil/CleanJson")] 
+    [MenuItem("Tools/LubanUtil/CleanJson")] 
     public static void CleanJson() {
         DirectoryInfo dir = new DirectoryInfo(TablePath + "/Json/");
         if (!dir.Exists) return;
