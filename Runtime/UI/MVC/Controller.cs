@@ -9,7 +9,7 @@ namespace QuickGameFramework.Runtime.UI {
 
         public bool IsShowing { get; private set; }
 
-        private void Start() {
+        private void Awake() {
             foreach (var component in transform.GetComponents<MonoBehaviour>()) {
                 var componentName = component.GetType().ToString();
                 if (componentName.Contains("Model")) {
