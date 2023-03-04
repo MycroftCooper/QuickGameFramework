@@ -177,7 +177,7 @@ namespace QuickGameFramework.Runtime {
 			UpdatePackageDict();
 		}
 
-		private void LogLoadSuccess(AssetOperationHandle handle) {
+		public static void LogLoadSuccess(AssetOperationHandle handle) {
 			if (handle.AssetObject != null) {
 				QLog.Log($"QuickGameFramework>Asset>资源<{handle.AssetObject.name}>加载成功!");
 			} else {
