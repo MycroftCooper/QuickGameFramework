@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using FairyGUI;
 using MycroftToolkit.QuickCode;
+using UnityEngine;
+using UnityEngine.U2D;
 using YooAsset;
 
 namespace QuickGameFramework.Runtime {
@@ -9,9 +11,14 @@ namespace QuickGameFramework.Runtime {
         private readonly ProjectAssetSetting _projectAssetSetting;
         private readonly Dictionary<string, AssetOperationHandle> _handleDict;
 
+        private SpriteAtlas _iconAtlas;
+
         public UIManager() {
             _projectAssetSetting = GameEntry.ConfigMgr.ProjectAssetSetting;
             _handleDict = new Dictionary<string, AssetOperationHandle>();
+
+            GameEntry.AssetMgr.LoadAssetAsync<SpriteAtlas>($"{_projectAssetSetting.uiResPath}IconAtlas",
+                _ => { _iconAtlas = _; }, _projectAssetSetting.uiAssetsPackageName);
         }
 
         #region UI资源预加载相关
@@ -74,5 +81,9 @@ namespace QuickGameFramework.Runtime {
             target.Dispose();
         }
         #endregion
+
+        public Sprite GetIcon(string iconID) {
+            return _iconAtlas.GetSprite(iconID);
+        }
     }
 }
