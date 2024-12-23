@@ -54,9 +54,16 @@ namespace MycroftToolkit.QuickResource.SpriteImportTool {
             if(targets.Count == 0)return;
             resultPreview.Clear();
             foreach (var target in targets) {
+                bool isReadable = target.texture.isReadable;
+                if (!isReadable) {
+                    target.texture.SetReadable(true);
+                }
                 Texture2D result = GetOutlineTexture(target.GetSlicedTexture());
                 result.filterMode = FilterMode.Point;
                 resultPreview.Add(result);
+                if (!isReadable) {
+                    target.texture.SetReadable(false);
+                }
             }
         }
         public Texture2D GetOutlineTexture(Texture2D targetTexture2D) {
@@ -142,9 +149,16 @@ namespace MycroftToolkit.QuickResource.SpriteImportTool {
             var textures = new Texture2D[targets.Count];
             var maxHeight = float.MinValue;
             for (var i = 0; i < targets.Count; i++) {
+                bool isReadable = targets[i].texture.isReadable;
+                if (!isReadable) {
+                    targets[i].texture.SetReadable(true);
+                }
                 textures[i] = targets[i].GetSlicedTexture();
                 if (targets[i].rect.height > maxHeight) {
                     maxHeight = targets[i].rect.height;
+                }
+                if (!isReadable) {
+                    targets[i].texture.SetReadable(false);
                 }
             }
             resultPreview.Clear();
